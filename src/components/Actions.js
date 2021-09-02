@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
-import Web3 from 'web3'
 
-//import App from './App'
-import dai from '../dai.png'
 
 
 
@@ -31,7 +28,7 @@ class Actions extends Component {
 
 
 
-    {this.props.searchManual(_tripSearched)};
+    this.props.searchManual(_tripSearched);
  
 
 
@@ -49,7 +46,7 @@ class Actions extends Component {
  
 </div>
 
-<button type="submit" className="btn btn-primary btn-block btn-lg">Buscar Viaje</button>
+<button type="submit" className="btn btn-primary btn-block btn-lg">Search Trip</button>
 </form>
 </div>
 </div>
@@ -71,7 +68,7 @@ class Actions extends Component {
 
    
  
- <button type="submit" className="btn btn-primary btn-block btn-lg">Ver mis viajes</button>
+ <button type="submit" className="btn btn-primary btn-block btn-lg">My Trips</button>
 
  </form>
  </div>
@@ -97,42 +94,92 @@ class Actions extends Component {
 
    
  
- <button type="submit" className="btn btn-primary btn-block btn-lg">Quiero Crear</button>
+ <button type="submit" className="btn btn-primary btn-block btn-lg">Create Trip</button>
 
  </form>
  </div>
 
  </div>
 
+ 
+
  <table className="table table-borderless text-muted text-center">
-          <thead>
-            <tr>
-              <th scope="col">Tu balance de tokens de Traxain</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
+          
           <tbody>
+            
             <tr>
-            <td>{window.web3.utils.fromWei(this.props.traxainTokenBalance, 'ether')} TXN </td>
+            <td>
+            Your Traxain Token balance
+              </td>
+            <td>{this.props.traxainTokenBalance} TXN </td>
             
             <td>
             { {/*!product.purchased*/}
                        ?
-              <button onClick={(event) => {this.props.refreshPage()}}>Refrescar</button>
+              <button style={{ marginRight:"0px"}} onClick={(event) => {this.props.refreshPage()}}>Refresh</button>
               :null
                     }
               </td>
             
             </tr>
-          </tbody>
-        </table>
+
+
+            
 
 
 
 
+       
 
-
- </div>
+ 
+             
+              
+              
+                
+                  <tr>
+                    <td> 
+                <div>
+                <span className="float-center text-muted"
+                style={{width:"30px"}}>
+                  Allowed: {this.props.allowed}
+                </span>
+                </div>
+              </td>
+                    <td>
+                    <span className="float-right input-group" style={{textAlign:"center"}}>
+                <input
+                  type="text"
+                  style={{width:"30px"}}
+                  ref={(incAmount) =>  this.incAmount = incAmount }
+                  className="form-control form-control-lg float-right"
+                  placeholder="0"
+                  required />
+                
+              </span>
+                    </td>
+                    <td>
+                    <span className="float-center text-muted">
+                    <form className="mb-3" onSubmit={(event) => {
+                event.preventDefault()
+                let incAmount
+                incAmount = this.incAmount.value.toString()
+                incAmount = window.web3.utils.toWei(incAmount, 'Ether')
+               
+                this.props.incAllow(incAmount)
+              }}>
+                    <button  type="submit" >Unlock</button>
+                    </form>
+                    </span>
+                    </td>
+                  </tr>
+                
+             
+              
+  
+             
+              </tbody>
+                </table>
+              </div>
  </div>
         )
       }

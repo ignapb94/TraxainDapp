@@ -1,8 +1,4 @@
 import React, { Component } from 'react'
-import Web3 from 'web3'
-
-//import App from './App'
-import dai from '../dai.png'
 
 
 
@@ -12,7 +8,7 @@ class Creation extends Component {
 
     render() {
         return (
-
+          <div id= "content" className="mt-3">
             <div className="card mb-4" >
 
             <div className="card-body">
@@ -26,12 +22,12 @@ class Creation extends Component {
               amount7 = window.web3.utils.toWei(amount7, 'Ether')
               let verifier =this.verifier.value
        
-              {this.props.createTrip(stringRef,bufferDay,payDay,amount7,verifier)}
+              this.props.createTrip(stringRef,bufferDay,payDay,amount7,verifier)
             }}>
             <div>
               <label className="float-left"><b>Crear viaje</b></label>
               <span className="float-right text-muted">
-                Viaje nº: {this.props.numberTrip}
+                Service nº: {this.props.numberTrip}
               </span>
             </div>
 
@@ -44,7 +40,7 @@ class Creation extends Component {
                 required />
               <div className="input-group-append">
                 <div className="input-group-text">
-                  REFERENCIA
+                  REFERENCE
                 </div>
               </div>
             </div>
@@ -58,7 +54,7 @@ class Creation extends Component {
                 required />
               <div className="input-group-append">
                 <div className="input-group-text">
-                  DÍAS HASTA DESBLOQUEO
+                  COMPLAINING PERIOD (DAYS)
                 </div>
               </div>
             </div>
@@ -72,7 +68,7 @@ class Creation extends Component {
                 required />
               <div className="input-group-append">
                 <div className="input-group-text">
-                  DÍAS HASTA PAGO
+                  PAYING PERIOD (DAYS)
                 </div>
               </div>
             </div>
@@ -86,7 +82,7 @@ class Creation extends Component {
                 required />
               <div className="input-group-append">
                 <div className="input-group-text">
-                  DEPÓSITO
+                  DEPOSIT
                 </div>
               </div>
             </div>
@@ -101,7 +97,7 @@ class Creation extends Component {
                 required />
               <div className="input-group-append">
                 <div className="input-group-text">
-                  VERIFICADOR
+                  VERIFIER
                 </div>
               </div>
             </div>
@@ -109,6 +105,7 @@ class Creation extends Component {
             
             <button type="submit" className="btn btn-primary btn-block btn-lg">Crear</button>
             </form>
+            </div>
             </div>
             </div>
         )

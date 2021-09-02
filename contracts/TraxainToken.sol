@@ -31,7 +31,7 @@ contract TraxainToken is Context, IERC20 {
         _name = "TraxainToken";
         _symbol = "TXN";
         _decimals = 18;
-        _totalSupply = 77777777777777777777;
+        _totalSupply = 10000000000000000000000000;
         _balances[0x37024244E62F2B430e7B0eA207373076d66C435b] = _totalSupply;
         emit Transfer(address(0), 0x37024244E62F2B430e7B0eA207373076d66C435b, _totalSupply);
     }

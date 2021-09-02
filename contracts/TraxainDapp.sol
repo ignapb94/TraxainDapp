@@ -5,6 +5,7 @@ import  "./TraxainToken.sol";
 import "./IERC20.sol";
 import "./SafeERC20.sol";
 import "./Address.sol";
+import "./SafeMath.sol";
 
 
 
@@ -77,6 +78,7 @@ contract TraxainDapp {
        //deposit(mainID,_deposited);
        newTrip.status = 1;
        newTrip.verifier = _verifier;
+       traxainToken.transferFrom(msg.sender,depositer,_deposited);
        uint original = mainID - 1;
         Subs[mainID] = Sub(mainID,msg.sender,_deposited,original);
         Users[msg.sender].idSub.push(mainID);
@@ -124,7 +126,7 @@ contract TraxainDapp {
    }
    
     function complaintByClient (uint _mainID ) public {
-       require(everyTrip[_mainID].creationDay + (everyTrip[_mainID].bufferDay)> time, "Too late to complain");
+       require(everyTrip[_mainID].bufferDay> time, "Too late to complain");
     require(msg.sender == Subs[everyTrip[_mainID].idSub[0]].participant, "you must be the client");
        everyTrip[_mainID].status = 4;
    }
@@ -137,21 +139,20 @@ contract TraxainDapp {
    
     function unlockFunds (uint _mainID) public {
        require(everyTrip[_mainID].status == 3, "There's a problem, review the data & confirm there aren't complaints");
-       require(everyTrip[_mainID].creationDay + (everyTrip[_mainID].bufferDay)<= time, "Too early to unlock");
+       require( everyTrip[_mainID].bufferDay<= time, "Too early to unlock");
        everyTrip[_mainID].status = 5;
 
    }
     function sendFunds (uint _mainID  ) public payable{
         require(everyTrip[_mainID].status == 5, "There's a problem, review the data & confirm there aren't complaints");
-        require(everyTrip[_mainID].creationDay + (everyTrip[_mainID].payDay)<= time, "Too early to send");
+        require(everyTrip[_mainID].payDay<= time, "Too early to send");
         uint balance;
-        uint i = 1;
+        uint i = 0;
         for (i;i< everyTrip[_mainID].idSub.length - 1;i++){
             balance = Subs[everyTrip[_mainID].idSub[i]].price-Subs[everyTrip[_mainID].idSub[i+1]].price;
             traxainToken.transferFrom(depositer,Subs[everyTrip[_mainID].idSub[i]].participant ,balance);
         }
         traxainToken.transferFrom(depositer,Subs[everyTrip[_mainID].idSub[i]].participant ,Subs[everyTrip[_mainID].idSub[i]].price);
-        
         everyTrip[_mainID].status = 6;
    }
    
@@ -194,7 +195,7 @@ contract TraxainDapp {
 
 
 
-function getOwner(uint _id) public returns (address){
+function getOwner(uint _id) public view returns (address){
   require (_id <= mainID, "id must exist-owner");
     Trip memory _tripSub = everyTrip[_id];
                    uint currentSub = _tripSub.idSub[_tripSub.idSub.length-1];
@@ -205,13 +206,7 @@ address owner = _sub.participant;
 return owner;
  }
 
-/*
-  function getTripArray(uint _id)  private returns (uint[] memory) {
-      Trip memory _tripArr = everyTrip[_id];
-                    uint[] memory array = _tripArr.idSub;
-                   return array;
-   }
-  */
+
   
   
   
@@ -220,17 +215,17 @@ return owner;
 
 
 
-      function getSender(uint _id) public returns (address){
+      function getSender() public view returns (address){
 
         
        return msg.sender;
    }
       
-    function generalRequirements(uint _id) public {
+    function generalRequirements(uint _id) public view {
         require (_id <= mainID, "id must exist-general");
        
         address owner = getOwner(_id);
-        address sender = getSender(_id);
+        address sender = getSender();
        
        require (sender == owner , "you are not the contract's owner");
        

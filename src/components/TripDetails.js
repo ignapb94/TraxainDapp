@@ -1,4 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import moment from 'moment';
+
 
 
 class TripDetails extends Component {
@@ -9,16 +11,18 @@ class TripDetails extends Component {
     return (
 
       
-<div>
-<br></br><br></br>
+      <div id= "content" className="mt-3">
+      <div className="card mb-4" >
+  
+      <div className="card-body">
 
 
 <table className="table">
           <thead>
             <tr>
-            <th scope="col">CreationDay</th>
-              <th scope="col">reference</th>
-              <th scope="col">Buffer</th>
+            <th scope="col">Max guarantee</th>
+              <th scope="col">Reference</th>
+              <th scope="col">Complain period</th>
              
               
             </tr>
@@ -27,9 +31,9 @@ class TripDetails extends Component {
             <tbody id="productList">
             <tr>
 
-                  <td>{this.props.myTrip.creationDay}</td>
+                  <td>{this.props.thisDeposited}</td>
                   <td>{this.props.myTrip.extRef}</td>
-                  <td>{this.props.myTrip.bufferDay}</td>
+                  <td>{moment(1629969143000+parseInt(this.props.myTrip.bufferDay, 10)*3600000*24).format(" MMMM Do YYYY")}</td>
             
               
             </tr>
@@ -48,7 +52,7 @@ class TripDetails extends Component {
             <tbody id="productList">
                 <tr>
                 
-                <td>{this.props.myTrip.payDay}</td>
+                <td>{moment(1629969143000+parseInt(this.props.myTrip.payDay, 10)*3600000*24).format(" MMMM Do YYYY")}</td>
                 <td>{this.props.strStatus}</td>
                 <td>{this.props.userRole}</td>
 
@@ -60,6 +64,8 @@ class TripDetails extends Component {
           </tbody>
  </table>
 
+  </div>
+  </div>
   </div>
     )
   }

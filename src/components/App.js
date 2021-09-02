@@ -22,59 +22,133 @@ class App extends Component {
 
 async componentWillMount() {
   
+
+  
+  let deviceType = await this.getDeviceType()
+  await this.setState({device:deviceType})
   await this.loadWeb3()
   await this.loadBlockchainData()
+  await this.getTime()
+
+/*} catch(err) {
+  await this.setState({errorHappened:true})
+
+    console.log("estoy funcionando!!");
+}*/
+
+
 }
 
 
 
 async loadWeb3() {
+
+  try {
+
   if(window.ethereum) {
     window.web3 = new Web3(window.ethereum)
     await window.ethereum.enable()
   }
   else if (window.web3) {
     window.web3 = new Web3(window.web3.currentProvider)
+    
+
+
   }
   else {
-    window.alert('Non-ethereum browser detected, Try metamask!!')
-  }
+    
+   await this.setState({loading: true})
+   await this.setState({somethingSearched:0}) 
+   await this.setState({traxainToken: {}})
+   await this.setState({traxainDapp: {}})
+   await this.setState({allowed:0})
+   await this.setState({myTrip:''})
+   await this.setState({strStatus:''})
+   await this.setState({errorHappened:true})
+   await this.setState({time:0})
+   await this.setState({noWallet:true})
+
+   console.log("im working")
+
+
+  
+  window.alert('In order to work, Traxain needs a Crypto Wallet, install Metamask and select the Rinkeby network ')
+    
+ 
+}
+} catch(err) {
+  await this.setState({errorHappened:true})
+
+    console.log("estoy funcionando!!");
+}
 }
 
 
 
 async loadBlockchainData() {
+
+  
+  try {
   const web3 = new Web3(Web3.givenProvider || "http://localhost:8545")
 
-  const networkId = await web3.eth.net.getId()
+/*  const networkId = await web3.eth.net.getId()
 
   const traxainTokenData = TraxainToken.networks[networkId];
   const traxainDappData = TraxainDapp.networks[networkId];
-  
-
+  */
   const accounts = await web3.eth.getAccounts()
   this.setState({account: accounts[0]})
-  const traxainToken = new web3.eth.Contract(TraxainToken.abi,  traxainTokenData.address)
+  const traxainToken = new web3.eth.Contract(TraxainToken.abi,  '0xe3664126158674fe682Fe3910340e7b2b8C7B27f')
   this.setState({traxainToken})
-  const traxainDapp = new web3.eth.Contract(TraxainDapp.abi,  traxainDappData.address)
+  const traxainDapp = new web3.eth.Contract(TraxainDapp.abi,  '0x4963047399560bC0570Ab88d49d601Eb673FDD53')
   this.setState({traxainDapp})
-  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, traxainDappData.address).call()
-  await this.setState({allowed: allowed.toString()})
+  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, '0x4963047399560bC0570Ab88d49d601Eb673FDD53').call()
+  allowed = await allowed.toString()
+  allowed = await window.web3.utils.fromWei(allowed, 'ether')
+  await this.setState({allowed: allowed})
   let traxainTokenBalance = await this.state.traxainToken.methods.balanceOf(this.state.account).call()
-  await this.setState({traxainTokenBalance: traxainTokenBalance.toString()})
+  traxainTokenBalance = await traxainTokenBalance.toString()
+  traxainTokenBalance = await window.web3.utils.fromWei(traxainTokenBalance, 'ether')
+  await this.setState({traxainTokenBalance: traxainTokenBalance})
+
   let numberTrip = await this.state.traxainDapp.methods.mainID().call()   
   await this.setState({numberTrip: numberTrip})  
   let time = await this.state.traxainDapp.methods.time().call()
   await this.setState({time: time}) 
   
+} catch(err) {
+  await this.setState({errorHappened:true})
 
+    console.log("estoy funcionando!!");
+}
 
   this.setState({loading: false})
 }
 
 
-  
-   
+
+async getDeviceType() {
+   let ua = await navigator.userAgent;
+  if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+    return "tablet";
+  }
+  if (
+    /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
+      ua
+    )
+  ) {
+    return "mobile";
+  }
+  return "desktop";
+};
+
+
+  async getTime(){
+var today = await 1629969143000 + (parseInt(this.state.time, 10)*3600000*24);
+console.log(today)
+this.setState({date:today})
+
+}
     
     
     
@@ -109,8 +183,12 @@ async loadBlockchainData() {
       dontCall:false,
       userRole:'',
       strStatus:'',
+      thisDeposited:'',
       errorHappened:false,
       time:'',
+      noWallet:false,
+      device:'',
+      date:'',
       backOfficeView:false
     }
     this.incAllow = this.incAllow.bind(this)
@@ -141,23 +219,27 @@ async loadBlockchainData() {
 
 async incAllow(incAmount) {
 
-  const web3 = new Web3(Web3.givenProvider || "http://localhost:8545")
-
-const networkId = await web3.eth.net.getId()
-  const traxainTokenData = TraxainToken.networks[networkId];
-const traxainDappData = TraxainDapp.networks[networkId];
+  try {
 
 
-  await this.state.traxainToken.methods.increaseAllowance(traxainDappData.address ,incAmount).send({from: this.state.account}).once('receipt',(receipt)=>{ 
+
+
+  await this.state.traxainToken.methods.increaseAllowance('0x4963047399560bC0570Ab88d49d601Eb673FDD53' ,incAmount).send({from: this.state.account}).once('receipt',(receipt)=>{ 
   })
   await this.setState({loading: true})
-  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, traxainDappData.address).call()
+  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, '0x4963047399560bC0570Ab88d49d601Eb673FDD53').call()
   console.log(allowed)
       this.setState({allowed: allowed.toString()})
   
     this.setState({loading: false})
   
+  } catch(err) {
+    await this.setState({errorHappened:true})
   
+      console.log("estoy funcionando!!");
+  }
+  this.setState({loading:false})
+      
   
 }
 
@@ -173,8 +255,7 @@ async createTrip(stringRef,bufferDay,payDay,amount7,verifier) {
   
   await this.state.traxainDapp.methods.createTrip(stringRef,bufferDay,payDay,amount7,verifier).send({from: this.state.account}).on('transactionHash',(hash) =>{
  })
-await this.state.traxainToken.methods.transfer( '0xBdc50027c1CC234C6f30838656D969365de91a2b',amount7).send({from: this.state.account}).on('transactionHash',(hash) =>{ 
-})
+
 
 let traxainTokenBalance2 = await this.state.traxainToken.methods.balanceOf(this.state.account).call()   
 await this.setState({traxainTokenBalance: traxainTokenBalance2.toString()})  
@@ -182,8 +263,6 @@ let numberTrip = await this.state.traxainDapp.methods.mainID().call()
 await this.setState({numberTrip: numberTrip})  
 
 
-
-let currentTrip = await this.state.traxainDapp.methods.everyTrip(this.state.numberTrip).call()
 
 
 } catch(err) {
@@ -286,7 +365,7 @@ async errorStatus() {
 
   this.setState({loading: true})
 
-  if(this.state.errorHappened == true){
+  if(this.state.errorHappened === true){
 
   await this.setState({errorHappened:false})
   console.log("no hya error")
@@ -418,13 +497,26 @@ async search(tripToSearch) {
 
   await this.setState({loading: true})
 
+  tripToSearch =  await parseInt(tripToSearch , 10);
   
-  let mainTripTosearch =   parseInt(tripToSearch , 10) +1;
+  let mainTripTosearch =  await  tripToSearch +1;
 
-  console.log(mainTripTosearch)
+  
 
   let myTrip = await this.state.traxainDapp.methods.everyTrip(mainTripTosearch).call()
   console.log(myTrip)
+  
+  let thisSub = await this.state.traxainDapp.methods.Subs(mainTripTosearch).call()
+
+  
+
+  let thisSubPrice = await thisSub.price;
+
+  thisSubPrice = await window.web3.utils.fromWei(thisSubPrice, 'Ether')
+
+  await this.setState({thisDeposited:thisSubPrice})
+
+  console.log(this.state.thisDeposited)
 
 
   
@@ -450,26 +542,26 @@ console.log(myStatus)
 
     switch(myStatus){
       case 1:
-      this.setState({strStatus:"Sin asignar"})
+      this.setState({strStatus:"Not assigned"})
         break;
         case 2:
-        this.setState({strStatus:"Transporte pendiente"})
+        this.setState({strStatus:"Pending service"})
         break;
         case 3:
-        this.setState({strStatus:"Transporte ejecutado"})
+        this.setState({strStatus:"Service executed"})
         break;
         case 4:
-        this.setState({strStatus:"Queja sin resolver"})
+        this.setState({strStatus:"Pending complaint"})
         break;
         case 5:
-        this.setState({strStatus:"Pendiete de pago"})
+        this.setState({strStatus:"Pending payment"})
         break;
         case 6:
-        this.setState({strStatus:"Completo"})
+        this.setState({strStatus:"Completed"})
         break;
-  
+        default:
+        this.setState({strStatus:"Other"})
     }
-    let myNewStatus = await this.state.strStatus
 
 
 }
@@ -493,7 +585,7 @@ this.setState({loading:false})
     let myTrip = await this.state.traxainDapp.methods.everyTrip(trip).call()
     let verifierRole = await myTrip.verifier
         console.log(verifierRole)
-    if (this.state.account == verifierRole){
+    if (this.state.account === verifierRole){
       return "verifier"
     } else {
         let ownerSub = await this.state.traxainDapp.methods.getSubIds(trip,0).call()
@@ -502,7 +594,7 @@ this.setState({loading:false})
         let ownerAddress =await this.state.traxainDapp.methods.getSubAddress(ownerSub).call()
         console.log(ownerAddress)
 
-        if (this.state.account == ownerAddress){
+        if (this.state.account === ownerAddress){
           return "owner"
         } else {
 
@@ -520,7 +612,7 @@ this.setState({loading:false})
            console.log(carrierSub)
            let carrierAddress = await this.state.traxainDapp.methods.getSubAddress(carrierSub).call()
            console.log(carrierAddress)
-            if( carrierAddress == this.state.account){
+            if( carrierAddress === this.state.account){
               return "contractor"
             }
           }
@@ -534,7 +626,7 @@ this.setState({loading:false})
 
 
           console.log(effectiveCarrierAddress)
-                if(effectiveCarrierAddress == this.state.account){
+                if(effectiveCarrierAddress === this.state.account){
                   return "Effective Carrier"
                 } else {
                return   "Other"
@@ -610,6 +702,29 @@ if(this.state.backOfficeView === false){
 
                       }
 
+
+async defaultValues() {
+
+
+
+
+    await this.setState({loading: true})
+    await this.setState({somethingSearched:0}) 
+    await this.setState({traxainToken: {}})
+    await this.setState({traxainDapp: {}})
+    await this.setState({allowed:0})
+    await this.setState({myTrip:''})
+    await this.setState({strStatus:''})
+    await this.setState({errorHappened:true})
+    await this.setState({time:0})
+    await this.setState({noWallet:true})
+
+    console.log("im working")
+  
+        
+        
+    }
+
   
 
 
@@ -622,7 +737,7 @@ if(this.state.backOfficeView === false){
 async increaseCount() {
 
 
-  //try {
+  try {
 
     await this.setState({loading: true})
    //let me = await this.state.traxainDapp.methods.getMsgSender().send({ from: this.state.account}).call()
@@ -644,11 +759,11 @@ async increaseCount() {
 
 
 
-    //} catch(err) {
-          //await this.setState({errorHappened:true})
+    } catch(err) {
+          await this.setState({errorHappened:true})
       
-            //console.log("estoy funcionando!!");
-       // }
+            console.log("estoy funcionando!!");
+        }
         await this.setState({loading:false})
 
                       }
@@ -672,11 +787,11 @@ async usersTripCount() {
   this.setState({loading: true})
   await this.setState({wantToCreate:false})
   
-  if(this.state.somethingSearched==0) {
+  if(this.state.somethingSearched===0) {
   await  this.setState({somethingSearched:1})}else {
     await  this.setState({somethingSearched:0})
   }
-  if(this.state.dontCall == false){
+  if(this.state.dontCall === false){
 
         
         let myUserArray = await this.state.traxainDapp.methods.getSubsArray(this.state.account).call()
@@ -724,10 +839,14 @@ async usersTripCount() {
       
   render() {
     let content
+
+
+
+
     if(this.state.loading) {
-      content = <p id="loader" className="text-center">Loading..</p>
+      content = <p id="loader" className="text-center" style={{fontSize:24,color:"#18a100"}}>Changes can take a few minutes to show, the network is processing the data...</p>
     } else {
-      if(this.state.errorHappened == true ) {
+      if(this.state.errorHappened === true ) {
         content = <ErrorHappened
         errorStatus={this.errorStatus}
 
@@ -779,7 +898,7 @@ async usersTripCount() {
 
     let listContent
     
-    if(this.state.wantToCreate==true) {
+    if(this.state.wantToCreate===true) {
 
     
 
@@ -828,6 +947,7 @@ async usersTripCount() {
       myTrip = {this.state.myTrip}
       userRole = {this.state.userRole}
       strStatus = {this.state.strStatus}
+      thisDeposited = {this.state.thisDeposited}
       
       
       />
@@ -867,30 +987,24 @@ async usersTripCount() {
       search={this.search}
       errorStatus={this.errorStatus}
       searchManual={this.searchManual}
+      incAllow={this.incAllow}
+      allowed = {this.state.allowed}
 
       
       />
-    
 
+      let table
+      if(this.state.device==='desktop') {
 
+        console.log(this.device)
 
-    return (
-      <div>
-        <Navbar account={this.state.account} 
-        
-        viewBackOffice={this.viewBackOffice}
-        time={this.state.time}
-
-        />
-        <br></br><br></br><br></br>
-        {content}
-        <table style={{width: "100%"}}>
+        table = <table style={{width: "100%"}}>
 
         <thead style={{width: "100%"}}>
             <tr style={{width: "100%"}}>
-              <th scope="col" className="text-center" style={{width: "33%",fontSize:30,padding:"30px"}}>Acciones</th>
-              <th scope="col" className="text-center" style={{width: "33%",fontSize:30}}>Viajes</th>
-              <th scope="col" className="text-center" style={{width: "33%",fontSize:30}}>Detalles</th>
+              <th scope="col" className="text-center" style={{width: "33%",fontSize:30}}>Actions</th>
+              <th scope="col" className="text-center" style={{width: "33%",fontSize:30}}>Services</th>
+              <th scope="col" className="text-center" style={{width: "33%",fontSize:30}}>Details</th>
             </tr>
           </thead>
           <tbody>
@@ -925,15 +1039,55 @@ async usersTripCount() {
           </tr>
           </tbody>
         </table>
+      } else {
+       
+     table=<table style={{width: "100%"}}>
+
+     
+         <tr style={{width: "100%"}}>
+           <th scope="col" className="text-center" style={{width: "100%",height: "20"}}></th>
+          </tr>
+          <tr style={{width: "100%"}}>
+          {actions}
+          </tr>
+
+          
+          <tr style={{width: "100%"}}>
+          {listContent}
+          </tr>
+
+         
+          <tr style={{width: "100%"}}>
+          {tripContent}
+          </tr>
+          
+          
+        
+        </table>
+      }
+      
+
+
+
+    return (
+      <div>
+        <Navbar account={this.state.account} 
+        device= {this.device}
+        viewBackOffice={this.viewBackOffice}
+        time={this.state.time}
+        date={this.state.date}
+
+        />
+        <br></br><br></br><br></br><br></br>
+        {content}
+        {table}
         </div>
 
       
     );
   
-    {/*}*/}
+  
   }
 }
-
-
 export default App;
 

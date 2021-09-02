@@ -8,10 +8,10 @@ class List extends Component {
   render() {
     return (
 
-      
-<div>
-<br></br><br></br>
-
+      <div id= "content" className="mt-3">
+      <div className="card mb-4" >
+  
+      <div className="card-body">
 
 <table className="table">
           <thead>
@@ -55,6 +55,8 @@ class List extends Component {
           </tbody>
  </table>
 
+  </div>
+  </div>
   </div>
     )
   }

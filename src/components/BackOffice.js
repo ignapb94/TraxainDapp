@@ -20,9 +20,11 @@ class BackOffice extends Component {
 <form className="mb-3" onSubmit={(event) => {
   event.preventDefault()
   
-  let _tripSelect = this._tripSelect.value -1 
+  let _tripSelect = this._tripSelect.value
+  
+  _tripSelect = parseInt(_tripSelect, 10) - 1
  
-  {this.props.search(_tripSelect)}
+  this.props.search(_tripSelect)
 }}>
 <div>
   <label className="float-left"><b>SelectTrip</b></label>
@@ -60,10 +62,10 @@ class BackOffice extends Component {
   event.preventDefault()
   
  
-  {this.props.confirmVer()}
+  this.props.confirmVer()
 }}>
 <div>
-  <label className="float-left"><b>Confirmar por validador</b></label>
+  <label className="float-left"><b>Confirmar by verifer</b></label>
  
 </div>
 
@@ -81,7 +83,7 @@ class BackOffice extends Component {
 <form className="mb-3" onSubmit={(event) => {
   event.preventDefault()
  
-  {this.props.complainSolve()}
+  this.props.complainSolve()
 }}>
 <div>
   <label className="float-left"><b>Solve Complaint</b></label>
@@ -107,16 +109,16 @@ class BackOffice extends Component {
   event.preventDefault()
   
  
-  {this.props.increaseCount()}
+  this.props.increaseCount()
 }}>
 <div>
-  <label className="float-left"><b>Actualizar cuenta</b></label>
+  <label className="float-left"><b>Update date</b></label>
  
 </div>
 
 
 
-<button type="submit" className="btn btn-primary btn-block btn-lg">Increment count</button>
+<button type="submit" className="btn btn-primary btn-block btn-lg">Update date</button>
 </form>
 </div>
 </div>
@@ -133,7 +135,7 @@ class BackOffice extends Component {
   
 
  
-  {this.props.unlock()}
+  this.props.unlock()
 }}>
 <div>
   <label className="float-left"><b>Unlock</b></label>
@@ -164,7 +166,7 @@ class BackOffice extends Component {
   event.preventDefault()
 
   
-  {this.props.send()}
+  this.props.send()
 }}>
 <div>
   <label className="float-left"><b>Send</b></label>
@@ -193,7 +195,7 @@ class BackOffice extends Component {
   let _idM = this._idM.value
  
  
-  {this.props.mark(_idM)}
+  this.props.mark(_idM)
 }}>
 <div>
   <label className="float-left"><b>Mark as Paid</b></label>
@@ -218,7 +220,7 @@ class BackOffice extends Component {
 <button type="submit" className="btn btn-primary btn-block btn-lg">Mark As Paid</button>
 </form>
 </div>
-
+{/*
 
 
 <div className="card-body">
@@ -231,9 +233,9 @@ class BackOffice extends Component {
                 this.props.incAllow(incAmount)
               }}>
               <div>
-                <label className="float-left"><b>Allow</b></label>
+                <label className="float-left"><b>Unlock</b></label>
                 <span className="float-right text-muted">
-                  Allowed: {window.web3.utils.fromWei(this.props.allowed, 'Ether')}
+                  Unlocked by you: {window.web3.utils.fromWei(this.props.allowed, 'Ether')}
                 </span>
               </div>
               <div className="input-group mb-4">
@@ -250,11 +252,11 @@ class BackOffice extends Component {
                   </div>
                 </div>
               </div>
-              <button type="submit" className="btn btn-primary btn-block btn-lg">Permitir</button>
+              <button type="submit" className="btn btn-primary btn-block btn-lg">Unlock funds</button>
   
               </form>
               </div>
-
+            */}
 
 </div>
 

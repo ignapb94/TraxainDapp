@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
-import Web3 from 'web3'
 
-//import App from './App'
-import dai from '../dai.png'
 
 
 
@@ -31,7 +28,7 @@ render() {
   subPrice = window.web3.utils.toWei(subPrice, 'Ether')
   
 
-  {this.props.addSub(provider,subPrice)}
+  this.props.addSub(provider,subPrice)
 }}>
 
 
@@ -81,7 +78,7 @@ render() {
 
 
 
-<button type="submit" className="btn btn-primary btn-block btn-lg" style={{marginTop:"20px"}}>Subcontratar</button>
+<button type="submit" className="btn btn-primary btn-block btn-lg" style={{marginTop:"20px"}}>Contract out</button>
 </form>
 </div>
 </div>
@@ -93,11 +90,11 @@ render() {
   event.preventDefault()
   
   
-  {this.props.confirmClient()}
+  this.props.confirmClient()
 }}>
 
 
-<button type="submit" className="btn btn-primary btn-block btn-lg">Confirma la Recepción</button>
+<button type="submit" className="btn btn-primary btn-block btn-lg">Confirm Service execution</button>
 </form>
 </div>
 </div>
@@ -114,14 +111,14 @@ render() {
 <form className="mb-3" onSubmit={(event) => {
   event.preventDefault()
  
-  {this.props.complainCli()}
+  this.props.complainCli()
 }}>
 
 
 
 
 
-<button type="submit" className="btn btn-primary btn-block btn-lg">Presenta una queja</button>
+<button type="submit" className="btn btn-primary btn-block btn-lg">Complain</button>
 </form>
 </div>
 </div>

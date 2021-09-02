@@ -18,7 +18,7 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       // You can render any custom fallback UI
-      return <h1>Por favor, revisa que estás conectado a Metamask y que lo datos introducidos son correctos</h1>;
+      return <h1>Please, make sure you are conncted to metamask and that imputs are correct.</h1>;
       console.log("eh aquí tienens un error")
     }
     return this.props.children;
