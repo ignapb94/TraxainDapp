@@ -41,7 +41,7 @@ class Actions extends Component {
     
     ref={(_tripSearched) => { this._tripSearched = _tripSearched }}
     className="form-control form-control-lg"
-    placeholder="Nº de Viaje"
+    placeholder="Service Number"
     required />
  
 </div>

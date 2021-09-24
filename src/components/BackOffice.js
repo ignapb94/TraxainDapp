@@ -112,7 +112,7 @@ class BackOffice extends Component {
   this.props.increaseCount()
 }}>
 <div>
-  <label className="float-left"><b>Update date</b></label>
+  <label className="float-left"><b>Time machine</b></label>
  
 </div>
 

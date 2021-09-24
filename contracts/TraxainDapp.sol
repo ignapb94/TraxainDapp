@@ -66,8 +66,7 @@ contract TraxainDapp {
    
    
    function createTrip (string memory _extRef, uint  _bufferDay, uint  _payDay, uint _deposited, address _verifier) public payable {
-       mainID ++;
-       mainID ++;
+       mainID +=2;
        Trip storage newTrip = everyTrip[mainID];
        newTrip.creationDay = time;
        newTrip.extRef = _extRef;
@@ -82,6 +81,7 @@ contract TraxainDapp {
        uint original = mainID - 1;
         Subs[mainID] = Sub(mainID,msg.sender,_deposited,original);
         Users[msg.sender].idSub.push(mainID);
+        autoSetTime;
 
        
       
@@ -94,13 +94,13 @@ contract TraxainDapp {
        uint index = everyTrip[_mainID].idSub.length-1;
        uint currentSub = everyTrip[_mainID].idSub[index];
        require( _price <= Subs[currentSub].price, "price must be equal or smaller than amount deposited");
-       mainID++;
-       mainID ++;
+       mainID +=2;
        uint original = _mainID -1;
         Subs[mainID] = Sub(mainID,_provider,_price,original);
        everyTrip[_mainID].idSub.push(mainID);
        everyTrip[_mainID].status = 2;
        Users[_provider].idSub.push(mainID);
+       autoSetTime();
     }
        
    
@@ -170,6 +170,14 @@ contract TraxainDapp {
             
        uint timeSet = time++;
        return timeSet;
+   }
+
+      function autoSetTime () private returns (uint){
+         
+uint rawTime = block.timestamp - 1629969143;  
+time = rawTime / 86400;
+       
+       return rawTime;
    }
    
 

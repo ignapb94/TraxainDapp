@@ -52,7 +52,7 @@ class Navbar extends Component {
     <div>
 
 <ul className="navbar-nav px-3">
-<li  style={{textAlign:"right"}} class="text-center">
+<li  style={{textAlign:"right"}} className="text-center">
 <small style={{textAlign:"right",fontSize:28,color:"FFFAFA",fontWeight:"bold"}} className="text-secondary">
 {moment(this.props.date).format(" MMMM Do YYYY")}
   </small>
@@ -64,12 +64,12 @@ class Navbar extends Component {
 <div>
 
     <ul className="navbar-nav px-3">
-      <li class="text-center">
+      <li className="text-center">
         <small className="text-secondary">
           <small id="account">{this.props.account}</small>
         </small>
       </li>
-      <li class="text-center">
+      <li className="text-center">
         <form className="d-inline-block"  onSubmit={(event) => {
                 event.preventDefault()
                 
@@ -80,7 +80,7 @@ class Navbar extends Component {
               
               
               </div>
-              <div class="text-center">
+              <div className="text-center">
                 
 
               <button type="submit" className="btn btn-primary btn-block align-center text-center" >Verifier area</button>
@@ -92,12 +92,9 @@ class Navbar extends Component {
     </div>
     </nav>
 
-  console.log("esotu en en desktop")
   } else {navigator = <table style={{width: "100%"}}>
-  {/* <tr style={{width: "100%"}}>
-    
-    <small id="account">{this.props.account}</small>
-    </tr>*/}<tr style={{width: "100%"}}>
+    <tbody>
+  <tr style={{width: "100%"}}>
     <td>
     <a
       className="navbar-brand col-sm-3 col-md-2 mr-0"
@@ -118,7 +115,7 @@ class Navbar extends Component {
     </tr><tr style={{width: "100%"}}>
       
       
-    <li class="text-center">
+    <li className="text-center">
         <form className="d-inline-block"  onSubmit={(event) => {
                 event.preventDefault()
                 
@@ -129,7 +126,7 @@ class Navbar extends Component {
               
               
               </div>
-              <div class="text-center">
+              <div className="text-center">
                 
 
               <button type="submit" className="btn btn-primary btn-block align-center text-center" >Verifier area</button>
@@ -138,7 +135,7 @@ class Navbar extends Component {
         </li>
       
       </tr>
-
+      </tbody>
   </table>
 
 

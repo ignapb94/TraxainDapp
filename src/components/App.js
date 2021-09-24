@@ -10,7 +10,10 @@ import BackOffice from './BackOffice'
 import Actions from './Actions'
 import Creation from './Creation'
 import ErrorHappened from './ErrorHappened'
+
 import './App.css'
+//import { render} from "react-dom";
+
 //import { TRAXAIN_TOKEN_ABI,TRAXAIN_TOKEN_ADDRESS, TRAXAIN_DAPP_ABI,TRAXAIN_DAPP_ADDRESS} from '../config'
 
 
@@ -98,11 +101,11 @@ async loadBlockchainData() {
   */
   const accounts = await web3.eth.getAccounts()
   this.setState({account: accounts[0]})
-  const traxainToken = new web3.eth.Contract(TraxainToken.abi,  '0xe3664126158674fe682Fe3910340e7b2b8C7B27f')
+  const traxainToken = new web3.eth.Contract(TraxainToken.abi,  '0xb0a4575B6f9Ec6a8a634cAA9E0708835dFFae1C3')
   this.setState({traxainToken})
-  const traxainDapp = new web3.eth.Contract(TraxainDapp.abi,  '0x4963047399560bC0570Ab88d49d601Eb673FDD53')
+  const traxainDapp = new web3.eth.Contract(TraxainDapp.abi,  '0xaB356a1F152c01a5300D1b9d793CC809EBa12412')
   this.setState({traxainDapp})
-  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, '0x4963047399560bC0570Ab88d49d601Eb673FDD53').call()
+  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, '0xaB356a1F152c01a5300D1b9d793CC809EBa12412').call()
   allowed = await allowed.toString()
   allowed = await window.web3.utils.fromWei(allowed, 'ether')
   await this.setState({allowed: allowed})
@@ -114,6 +117,7 @@ async loadBlockchainData() {
   let numberTrip = await this.state.traxainDapp.methods.mainID().call()   
   await this.setState({numberTrip: numberTrip})  
   let time = await this.state.traxainDapp.methods.time().call()
+  console.log(time)
   await this.setState({time: time}) 
   
 } catch(err) {
@@ -145,7 +149,7 @@ async getDeviceType() {
 
   async getTime(){
 var today = await 1629969143000 + (parseInt(this.state.time, 10)*3600000*24);
-console.log(today)
+
 this.setState({date:today})
 
 }
@@ -224,10 +228,10 @@ async incAllow(incAmount) {
 
 
 
-  await this.state.traxainToken.methods.increaseAllowance('0x4963047399560bC0570Ab88d49d601Eb673FDD53' ,incAmount).send({from: this.state.account}).once('receipt',(receipt)=>{ 
+  await this.state.traxainToken.methods.increaseAllowance('0xaB356a1F152c01a5300D1b9d793CC809EBa12412' ,incAmount).send({from: this.state.account}).once('receipt',(receipt)=>{ 
   })
   await this.setState({loading: true})
-  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, '0x4963047399560bC0570Ab88d49d601Eb673FDD53').call()
+  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, '0xaB356a1F152c01a5300D1b9d793CC809EBa12412').call()
   console.log(allowed)
       this.setState({allowed: allowed.toString()})
   
@@ -248,7 +252,7 @@ async incAllow(incAmount) {
 
 async createTrip(stringRef,bufferDay,payDay,amount7,verifier) {
 
-  try {
+console.log(bufferDay)
 
 
   await this.setState({loading: true})
@@ -265,11 +269,6 @@ await this.setState({numberTrip: numberTrip})
 
 
 
-} catch(err) {
-  await this.setState({errorHappened:true})
-
-    console.log("estoy funcionando!!");
-}
 this.setState({loading:false})
     }
 
@@ -798,9 +797,11 @@ async usersTripCount() {
         console.log(myUserArray)
         let myTripsCount = await myUserArray.length
         this.setState({myTripsCount:myTripsCount})
-        
-          
-            for (var i =0; i< myTripsCount; i++) {
+        var startbackwardCount = myTripsCount - 1;
+       
+            for (var i = startbackwardCount; i > -1; i--) {
+              
+              console.log("aqui estoy" + i)
               let subIndex = await myUserArray[i]
               const sub = await this.state.traxainDapp.methods.Subs(subIndex).call()
               
@@ -996,8 +997,6 @@ async usersTripCount() {
       let table
       if(this.state.device==='desktop') {
 
-        console.log(this.device)
-
         table = <table style={{width: "100%"}}>
 
         <thead style={{width: "100%"}}>
@@ -1042,7 +1041,7 @@ async usersTripCount() {
       } else {
        
      table=<table style={{width: "100%"}}>
-
+      <tbody>
      
          <tr style={{width: "100%"}}>
            <th scope="col" className="text-center" style={{width: "100%",height: "20"}}></th>
@@ -1062,7 +1061,7 @@ async usersTripCount() {
           </tr>
           
           
-        
+          </tbody>
         </table>
       }
       

@@ -11,6 +11,9 @@ const TraxainDapp = artifacts.require("TraxainDapp");
 module.exports = async function(deployer) {
   await deployer.deploy(TraxainToken);
   const traxainToken = await TraxainToken.deployed()
+
+  await deployer.deploy(TraxainDapp, traxainToken.address, '0xBdc50027c1CC234C6f30838656D969365de91a2b');
+  const traxainDapp = await TraxainDapp.deployed()
  
   await deployer.deploy(SafeMath);
   const safeMath = await SafeMath.deployed()
@@ -22,8 +25,7 @@ module.exports = async function(deployer) {
   await deployer.deploy(Address);
   const address = await Address.deployed()
 
-  await deployer.deploy(TraxainDapp, traxainToken.address, '0xBdc50027c1CC234C6f30838656D969365de91a2b');
-  const traxainDapp = await TraxainDapp.deployed()
+ 
   
 
 
