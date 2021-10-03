@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Web3 from 'web3'
+import $ from 'jquery';
 import TraxainToken from '../artifacts/TraxainToken.json'
 import TraxainDapp from '../artifacts/TraxainDapp.json'
 import Main from './Main'
@@ -28,10 +29,14 @@ async componentWillMount() {
 
   
   let deviceType = await this.getDeviceType()
+  await this.getDate()
   await this.setState({device:deviceType})
   await this.loadWeb3()
   await this.loadBlockchainData()
-  await this.getTime()
+  await this.getTimeServer()
+  await this.getMainID()
+
+  
 
 /*} catch(err) {
   await this.setState({errorHappened:true})
@@ -44,6 +49,7 @@ async componentWillMount() {
 
 
 
+
 async loadWeb3() {
 
   try {
@@ -51,10 +57,13 @@ async loadWeb3() {
   if(window.ethereum) {
     window.web3 = new Web3(window.ethereum)
     await window.ethereum.enable()
+    await this.setState({noWallet:false})
+    console.log(this.state.noWallet)
   }
   else if (window.web3) {
     window.web3 = new Web3(window.web3.currentProvider)
-    
+    await this.setState({noWallet:false})
+    console.log(this.state.noWallet)
 
 
   }
@@ -67,22 +76,19 @@ async loadWeb3() {
    await this.setState({allowed:0})
    await this.setState({myTrip:''})
    await this.setState({strStatus:''})
-   await this.setState({errorHappened:true})
-   await this.setState({time:0})
    await this.setState({noWallet:true})
 
-   console.log("im working")
 
 
   
-  window.alert('In order to work, Traxain needs a Crypto Wallet, install Metamask and select the Rinkeby network ')
+  //window.alert('In order to work, Traxain needs a Crypto Wallet, install Metamask and select the Rinkeby network ')
     
  
 }
 } catch(err) {
-  await this.setState({errorHappened:true})
+  await this.setState({noWallet:true})
+  console.log("error en loadWeb3")
 
-    console.log("estoy funcionando!!");
 }
 }
 
@@ -92,7 +98,7 @@ async loadBlockchainData() {
 
   
   try {
-  const web3 = new Web3(Web3.givenProvider || "http://localhost:8545")
+  const web3 = new Web3(Web3.givenProvider)// || "http://localhost:8545")
 
 /*  const networkId = await web3.eth.net.getId()
 
@@ -101,11 +107,11 @@ async loadBlockchainData() {
   */
   const accounts = await web3.eth.getAccounts()
   this.setState({account: accounts[0]})
-  const traxainToken = new web3.eth.Contract(TraxainToken.abi,  '0xb0a4575B6f9Ec6a8a634cAA9E0708835dFFae1C3')
+  const traxainToken = new web3.eth.Contract(TraxainToken.abi,  '0xC8EABB1F395D496C74344cd7e00E6E4b85d6Edd7')
   this.setState({traxainToken})
-  const traxainDapp = new web3.eth.Contract(TraxainDapp.abi,  '0xaB356a1F152c01a5300D1b9d793CC809EBa12412')
+  const traxainDapp = new web3.eth.Contract(TraxainDapp.abi,  '0x371900FACC3725F5Ca03d7220e2673a627a211D7')
   this.setState({traxainDapp})
-  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, '0xaB356a1F152c01a5300D1b9d793CC809EBa12412').call()
+  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, '0x371900FACC3725F5Ca03d7220e2673a627a211D7').call()
   allowed = await allowed.toString()
   allowed = await window.web3.utils.fromWei(allowed, 'ether')
   await this.setState({allowed: allowed})
@@ -113,17 +119,18 @@ async loadBlockchainData() {
   traxainTokenBalance = await traxainTokenBalance.toString()
   traxainTokenBalance = await window.web3.utils.fromWei(traxainTokenBalance, 'ether')
   await this.setState({traxainTokenBalance: traxainTokenBalance})
-
+/*
   let numberTrip = await this.state.traxainDapp.methods.mainID().call()   
   await this.setState({numberTrip: numberTrip})  
-  let time = await this.state.traxainDapp.methods.time().call()
-  console.log(time)
-  await this.setState({time: time}) 
+  */
+  //let time = await this.state.traxainDapp.methods.time().call()
+  //console.log(time)
+  //await this.setState({time: time}) 
   
 } catch(err) {
-  await this.setState({errorHappened:true})
+ // await this.setState({errorHappened:true})
 
-    console.log("estoy funcionando!!");
+ //   console.log("estoy funcionando!!");
 }
 
   this.setState({loading: false})
@@ -147,25 +154,103 @@ async getDeviceType() {
 };
 
 
-  async getTime(){
-var today = await 1629969143000 + (parseInt(this.state.time, 10)*3600000*24);
 
-this.setState({date:today})
+
+async getTimeServer() {
+
+  try {
+
+
+  var time
+  var noWallet = await this.state.noWallet
+
+  if(noWallet == true){
+
+            var url = await this.state.endPoint+ 'get-time';
+            await fetch(url).then((response) => response.json())
+            .then(function(data) { 
+              time = data;
+              
+            })
+            
+          } else {
+
+            time = await this.state.traxainDapp.methods.time().call()
+            console.log("con wallet")
+   
+
+          }
+  await this.setState({ time: time })
+} catch(err) {
+  await this.setState({errorHappened:true})
+
+    console.log("error en getTime server");
+}
 
 }
-    
-    
-    
-   /* 
-    unstakeTokens = () => {
-      this.setState({ loading: true})
-        this.state.tokenFarm.methods.unstakeTokens().send({ from: this.state.account}).on('transactionHash',(hash) =>{
-          this.setState({loading:false})
-      })
-   
-    }
 
-    */
+
+
+async getMainID() {
+
+  try {
+
+
+  var mainID
+  var noWallet = await this.state.noWallet
+
+  if(noWallet == true){
+
+            var url = await this.state.endPoint+ 'get-mainID';
+            await fetch(url).then((response) => response.json())
+            .then(function(data) { 
+              mainID = data;
+              
+            })
+            console.log("sin wallet")
+          } else {
+
+            mainID = await this.state.traxainDapp.methods.mainID().call()
+            console.log("con wallet")
+   
+
+          }
+  await this.setState({ numberTrip: mainID })
+  await console.log(mainID)
+} catch(err) {
+  await this.setState({errorHappened:true})
+
+    console.log("error en getMain");
+}
+
+}
+
+
+
+
+async getDate(){
+
+try {
+
+var today = await new Date();
+today = await today.getTime()
+  
+today = await parseInt(today, 10);
+
+await this.setState({date:today})
+await console.log(today)
+} catch(err) {
+  await this.setState({errorHappened:true})
+
+    console.log("error en get Date");
+}
+
+
+}
+
+
+
+
 
   constructor(props) {
     super(props)
@@ -173,6 +258,7 @@ this.setState({date:today})
       account: '0x0',
       traxainToken: {},
       traxainDapp: {},
+      endPoint:'http://127.0.0.1:8000/',
       traxainTokenBalance: '0',
       allowed:'',
       numberTrip: 0,
@@ -190,7 +276,7 @@ this.setState({date:today})
       thisDeposited:'',
       errorHappened:false,
       time:'',
-      noWallet:false,
+      noWallet:true,
       device:'',
       date:'',
       backOfficeView:false
@@ -228,10 +314,10 @@ async incAllow(incAmount) {
 
 
 
-  await this.state.traxainToken.methods.increaseAllowance('0xaB356a1F152c01a5300D1b9d793CC809EBa12412' ,incAmount).send({from: this.state.account}).once('receipt',(receipt)=>{ 
+  await this.state.traxainToken.methods.increaseAllowance('0x371900FACC3725F5Ca03d7220e2673a627a211D7' ,incAmount).send({from: this.state.account}).once('receipt',(receipt)=>{ 
   })
   await this.setState({loading: true})
-  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, '0xaB356a1F152c01a5300D1b9d793CC809EBa12412').call()
+  let allowed = await this.state.traxainToken.methods.allowance(this.state.account, '0x371900FACC3725F5Ca03d7220e2673a627a211D7').call()
   console.log(allowed)
       this.setState({allowed: allowed.toString()})
   
@@ -470,18 +556,27 @@ async mark(_idM) {
 
   async searchManual(subToSearch) {
 
-
-      this.setState({loading:false})
+    
+    var noWallet = await this.state.noWallet
+    var tripToSearch
+    if(noWallet == true){
       
-      let tripToSearch = await this.state.traxainDapp.methods.getMainFromSub(subToSearch).call()
+        var url = await this.state.endPoint+ 'get-trip-from-sub'+ '/' + subToSearch;
+      await fetch(url).then((response) => response.json())
+      .then(function(data) { 
+        tripToSearch = data;
+      })
+    } else {
+      tripToSearch = await this.state.traxainDapp.methods.getMainFromSub(subToSearch).call()
 
-console.log(tripToSearch)
+    }
+
 
       let tripMinus = parseInt(tripToSearch, 10);
       this.search(tripMinus);
     
  
-  this.setState({loading:false})
+      this.setState({loading:false})
   
                 }
         
@@ -491,7 +586,7 @@ console.log(tripToSearch)
 
 async search(tripToSearch) {
   
-  try {
+
 
 
   await this.setState({loading: true})
@@ -500,26 +595,72 @@ async search(tripToSearch) {
   
   let mainTripTosearch =  await  tripToSearch +1;
 
+  var myTrip 
+  //console.log(myTrip)
+  var thisSub
+
+  try {
+  var noWallet = await this.state.noWallet
+    var tripToSearch
+    console.log(noWallet)
+    if(noWallet == true){
+      var url1 = await this.state.endPoint+ 'get-trip-by-ID'+'/'+ mainTripTosearch;
+      await fetch(url1).then((response) => response.json())
+      .then(function(data) { 
+        myTrip = data;
+        myTrip.creationDay = myTrip[0];
+        myTrip.extRef = myTrip[1];
+        myTrip.bufferDay = myTrip[2];
+        myTrip.payDay = myTrip[3];
+        myTrip.status = myTrip[4];
+        myTrip.verifier = myTrip[5];
+        myTrip.idSub = myTrip[5];
+    })
+      var url2 = await this.state.endPoint+ 'get-sub-by-ID'+'/'+ mainTripTosearch;
+      await fetch(url2).then((response) => response.json())
+      .then(function(data) { 
+      thisSub = data;
+
+      thisSub.idS = thisSub[0];
+      thisSub.participant = thisSub[1];
+      thisSub.price= thisSub[2];
+      thisSub.mainTrip= thisSub[3];
+
+    })
+    }else{
+      myTrip = await this.state.traxainDapp.methods.everyTrip(mainTripTosearch).call()
+      thisSub = await this.state.traxainDapp.methods.Subs(mainTripTosearch).call()
+
+    }
+  }
+  catch(err) {
+    await this.setState({errorHappened:true})
   
+      console.log("error al traer datos");
+  }
 
-  let myTrip = await this.state.traxainDapp.methods.everyTrip(mainTripTosearch).call()
-  console.log(myTrip)
+    var thisSubPrice = await thisSub.price;
+
+  if(noWallet == false){
+
+    thisSubPrice = await window.web3.utils.fromWei(thisSubPrice, 'Ether')
+
   
-  let thisSub = await this.state.traxainDapp.methods.Subs(mainTripTosearch).call()
-
-  
-
-  let thisSubPrice = await thisSub.price;
-
-  thisSubPrice = await window.web3.utils.fromWei(thisSubPrice, 'Ether')
-
+}
   await this.setState({thisDeposited:thisSubPrice})
 
-  console.log(this.state.thisDeposited)
-
-
   
-    let userRole = await this.getUserRole(mainTripTosearch);
+
+  try {
+
+    var userRole
+    if(noWallet=true){
+    userRole = "Observer";
+    }else{
+
+    userRole = await this.getUserRole(mainTripTosearch);
+    }
+  
     this.setState({userRole:userRole})
     this.setState({myTrip:myTrip})
     console.log(userRole)
@@ -567,7 +708,7 @@ console.log(myStatus)
 catch(err) {
   await this.setState({errorHappened:true})
 
-    console.log("estoy funcionando!!");
+    console.log("error al operar los datos");
 }
 this.setState({loading:false})
 

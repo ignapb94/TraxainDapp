@@ -81,7 +81,7 @@ contract TraxainDapp {
        uint original = mainID - 1;
         Subs[mainID] = Sub(mainID,msg.sender,_deposited,original);
         Users[msg.sender].idSub.push(mainID);
-        autoSetTime;
+        autoSetTime();
 
        
       
@@ -172,7 +172,7 @@ contract TraxainDapp {
        return timeSet;
    }
 
-      function autoSetTime () private returns (uint){
+      function autoSetTime () public returns (uint){
          
 uint rawTime = block.timestamp - 1629969143;  
 time = rawTime / 86400;

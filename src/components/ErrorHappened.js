@@ -23,12 +23,12 @@ class ErrorHappened extends Component {
           </thead>
           <tbody>
             <tr>
-            <td>Something's wrong, please check you are connected to Metamask and that imputs are correct </td>
+            <td>In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support</td>
             
             <td>
             { {/*!product.purchased*/}
                        ?
-              <button onClick={(event) => {this.props.errorStatus()}}>Refresh</button>
+              <button onClick={(event) => {this.props.errorStatus()}}>Got it</button>
               :null
                     }
               </td>

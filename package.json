@@ -20,6 +20,7 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "chai-bignumber": "3.0.0",
+    "cors": "^2.8.5",
     "identicon.js": "^2.3.3",
     "jquery": "^3.6.0",
     "moment": "^2.29.1",
