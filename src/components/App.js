@@ -181,6 +181,7 @@ async getTimeServer() {
 
           }
   await this.setState({ time: time })
+  console.log("Current Time " + this.state.time)
 } catch(err) {
   await this.setState({errorHappened:true})
 
@@ -258,7 +259,7 @@ await console.log(today)
       account: '0x0',
       traxainToken: {},
       traxainDapp: {},
-      endPoint:'http://127.0.0.1:8000/',
+      endPoint:'http://13.36.195.31:8000/',
       traxainTokenBalance: '0',
       allowed:'',
       numberTrip: 0,
@@ -646,6 +647,8 @@ async search(tripToSearch) {
     thisSubPrice = await window.web3.utils.fromWei(thisSubPrice, 'Ether')
 
   
+} else {
+  thisSubPrice = thisSubPrice/1000000000000000000	
 }
   await this.setState({thisDeposited:thisSubPrice})
 
