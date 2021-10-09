@@ -23,7 +23,7 @@ class ErrorHappened extends Component {
           </thead>
           <tbody>
             <tr>
-            <td>In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support</td>
+            <td><p>{this.props.errorMsg}</p></td>
             
             <td>
             { {/*!product.purchased*/}

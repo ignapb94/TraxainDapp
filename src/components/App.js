@@ -77,17 +77,20 @@ async loadWeb3() {
    await this.setState({myTrip:''})
    await this.setState({strStatus:''})
    await this.setState({noWallet:true})
+   await this.setState({errorMsg:'You are currently on Normal Mode, if you want to use secure Mode, install metamask'})
+   await this.setState({errorHappened:true})
 
+   console.log("no nos hemos conectado")
 
-
+  await console.log(this.state.errorMsg)
   
-  //window.alert('In order to work, Traxain needs a Crypto Wallet, install Metamask and select the Rinkeby network ')
     
  
 }
 } catch(err) {
   await this.setState({noWallet:true})
   console.log("error en loadWeb3")
+
 
 }
 }
@@ -128,8 +131,8 @@ async loadBlockchainData() {
   //await this.setState({time: time}) 
   
 } catch(err) {
- // await this.setState({errorHappened:true})
-
+ 
+ console.log("error al loadblockchain")
  //   console.log("estoy funcionando!!");
 }
 
@@ -160,12 +163,12 @@ async getTimeServer() {
 
   try {
 
-
+console.log("inicio getTimeServer")
   var time
   var noWallet = await this.state.noWallet
 
   if(noWallet == true){
-
+            console.log("error en nowallet treu")
             var url = await this.state.endPoint+ 'get-time';
             await fetch(url).then((response) => response.json())
             .then(function(data) { 
@@ -173,19 +176,25 @@ async getTimeServer() {
               
             })
             
+            await this.setState({errorHappened:true})
+            await this.setState({errorMsg:'You are currently on Normal Mode, if you want to use secure Mode, install metamask'})
+            
+
           } else {
 
             time = await this.state.traxainDapp.methods.time().call()
             console.log("con wallet")
-   
+            console.log("error en nowallet false")
 
           }
   await this.setState({ time: time })
   console.log("Current Time " + this.state.time)
+  
 } catch(err) {
-  await this.setState({errorHappened:true})
-
+  
     console.log("error en getTime server");
+    //window.location.replace("http://ecargo.link")
+    
 }
 
 }
@@ -220,6 +229,7 @@ async getMainID() {
   await console.log(mainID)
 } catch(err) {
   await this.setState({errorHappened:true})
+  await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
 
     console.log("error en getMain");
 }
@@ -239,9 +249,10 @@ today = await today.getTime()
 today = await parseInt(today, 10);
 
 await this.setState({date:today})
-await console.log(today)
+//await console.log(today)
 } catch(err) {
   await this.setState({errorHappened:true})
+  await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
 
     console.log("error en get Date");
 }
@@ -259,12 +270,12 @@ await console.log(today)
       account: '0x0',
       traxainToken: {},
       traxainDapp: {},
-      endPoint:'http://13.36.195.31:8000/',
+      endPoint:'https://traxain.online/',
       traxainTokenBalance: '0',
       allowed:'',
       numberTrip: 0,
       myTrip:'',
-      loading: true,
+      loading: false,
       idSubs: '',
       Subs: [],
       thisTripID:'',
@@ -280,6 +291,7 @@ await console.log(today)
       noWallet:true,
       device:'',
       date:'',
+      errorMsg:'',
       backOfficeView:false
     }
     this.incAllow = this.incAllow.bind(this)
@@ -326,6 +338,7 @@ async incAllow(incAmount) {
   
   } catch(err) {
     await this.setState({errorHappened:true})
+    await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
   
       console.log("estoy funcionando!!");
   }
@@ -340,7 +353,7 @@ async incAllow(incAmount) {
 async createTrip(stringRef,bufferDay,payDay,amount7,verifier) {
 
 console.log(bufferDay)
-
+try {
 
   await this.setState({loading: true})
   
@@ -357,6 +370,13 @@ await this.setState({numberTrip: numberTrip})
 
 
 this.setState({loading:false})
+} catch(err) {
+  await this.setState({errorHappened:true})
+  await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+  
+
+
+}
     }
 
 async addSub(provider, amount3) {
@@ -378,7 +398,8 @@ await this.setState({numberTrip: numberTrip})
     
   } catch(err) {
     await this.setState({errorHappened:true})
-  
+    await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
       console.log("estoy funcionando!!");
   }
   this.setState({loading:false})
@@ -399,7 +420,8 @@ async confirmClient() {
   })
   } catch(err) {
     await this.setState({errorHappened:true})
-  
+    await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
       console.log("estoy funcionando!!");
   }
   this.setState({loading:false})
@@ -418,7 +440,8 @@ async confirmVer() {
   })
   } catch(err) {
     await this.setState({errorHappened:true})
-  
+    await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
       console.log("estoy funcionando!!");
   }
   this.setState({loading:false})
@@ -440,7 +463,8 @@ console.log(trip)
   })
   } catch(err) {
     await this.setState({errorHappened:true})
-  
+    await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
       console.log("estoy funcionando!!");
   }
   this.setState({loading:false})
@@ -482,7 +506,8 @@ async complainSolve() {
   })
   } catch(err) {
     await this.setState({errorHappened:true})
-  
+    await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
       console.log("estoy funcionando!!");
   }
   this.setState({loading:false})
@@ -504,7 +529,8 @@ async unlock() {
     
     } catch(err) {
     await this.setState({errorHappened:true})
-  
+    await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
       console.log("estoy funcionando!!");
   }
   this.setState({loading:false})
@@ -526,8 +552,8 @@ send = () => {
 
 } catch(err) {
    this.setState({errorHappened:true})
+    this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
 
-    console.log("estoy funcionando!!");
 }
 this.setState({loading:false})
     
@@ -547,7 +573,8 @@ async mark(_idM) {
 
   } catch(err) {
     await this.setState({errorHappened:true})
-  
+    await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
       console.log("estoy funcionando!!");
   }
   this.setState({loading:false})
@@ -556,7 +583,7 @@ async mark(_idM) {
   
 
   async searchManual(subToSearch) {
-
+    try {
     
     var noWallet = await this.state.noWallet
     var tripToSearch
@@ -578,6 +605,13 @@ async mark(_idM) {
     
  
       this.setState({loading:false})
+
+    }
+    catch(err) {
+      await this.setState({errorHappened:true})
+      await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+  
+    }
   
                 }
         
@@ -636,7 +670,8 @@ async search(tripToSearch) {
   }
   catch(err) {
     await this.setState({errorHappened:true})
-  
+    await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
       console.log("error al traer datos");
   }
 
@@ -710,6 +745,7 @@ console.log(myStatus)
 }
 catch(err) {
   await this.setState({errorHappened:true})
+  await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
 
     console.log("error al operar los datos");
 }
@@ -789,6 +825,7 @@ this.setState({loading:false})
   }
   catch(err) {
     await this.setState({errorHappened:true})
+    await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
 
       console.log("estoy funcionando!!");
   }
@@ -811,7 +848,8 @@ if(this.state.backOfficeView === false){
     }}
     catch(err) {
       await this.setState({errorHappened:true})
-  
+      await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
         console.log("estoy funcionando!!");
     }
     await this.setState({loading:false})
@@ -838,7 +876,8 @@ if(this.state.backOfficeView === false){
       }
      } catch(err) {
           await this.setState({errorHappened:true})
-      
+          await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
             console.log("estoy funcionando!!");
         }
         await this.setState({loading:false})
@@ -904,7 +943,8 @@ async increaseCount() {
 
     } catch(err) {
           await this.setState({errorHappened:true})
-      
+          await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
             console.log("estoy funcionando!!");
         }
         await this.setState({loading:false})
@@ -965,7 +1005,8 @@ async usersTripCount() {
       
     } catch(err) {
       await this.setState({errorHappened:true})
-  
+      await this.setState({errorMsg:'In order to access all features, you need to get Metamask and some Traxain Tokens. Contact us at Traxain.com to get support'})
+
         console.log("estoy funcionando!!");
     }
     await this.setState({loading:false})
@@ -994,6 +1035,7 @@ async usersTripCount() {
       if(this.state.errorHappened === true ) {
         content = <ErrorHappened
         errorStatus={this.errorStatus}
+        errorMsg={this.state.errorMsg}
 
         />
         console.log("estoy encontrando el error")
